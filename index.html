@@ -4,18 +4,54 @@
 	<meta charset="UTF-8">
 	<title>Document</title>
 	<link rel="stylesheet" href="css/style.css">
-	<script src="js/jquery-2.0.3.js"></script>
+	<script src="js/jquery-3.2.0.min.js"></script>
 	<script src="js/jquery.autosearch.js"></script>
+	<style>
+	*::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+	background: transparent
+}
+
+*::-webkit-scrollbar-thumb {
+	border-radius: 10px;
+	background-color: rgba(0,0,0,.2)
+}
+
+*:hover::-webkit-scrollbar-thumb {
+	background-color: rgba(0,0,0,.5)
+}
+		body{
+			margin: 0;
+			font-size: 12px;
+			    line-height: 20px;
+		}
+		ul,li{
+			list-style: none;
+			margin: 0;
+			padding: 0;
+		}
+		#box{
+			padding: 50px;
+			width: 500px;
+		}
+	</style>
 </head>
 <body>
+<div id="box">
 	<label>
 	<input type="text" class="box">
 	</label>
+</div>
 	<script>
 		$(".box").autoSearch({
 			selectInitData :[{id:6,title:"厦门站"},{id:9,title:"厦门站123"}],
 	        maxHeight :309,
 	        maxItems : 50,
+	        selectType:"multiple",
 	        selectedType:"id",
 	        recommenddata:[{id: "4", title: "厦门北站"},{id: "9", title: "厦门站123"},
 {id: "6", title: "厦门站"},{id: "14", title: "厦门北站"},{id: "19", title: "厦门站123"},
