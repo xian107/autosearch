@@ -1,0 +1,91 @@
+.search-wrapper {
+  display: none;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  position: absolute;
+  z-index: 10;
+}
+.search-wrapper .search-container {
+  position: relative;
+  color: #666;
+  overflow-y: auto;
+}
+.search-wrapper .search-tips {
+  border-bottom: 1px dashed #ddd;
+  padding: 5px 10px;
+}
+.search-wrapper .search-tips-tit {
+  color: #999;
+}
+.search-wrapper .search-close {
+  float: right;
+  font-size: 18px;
+  cursor: pointer;
+}
+.search-wrapper .search-close:before {
+  content: "X";
+}
+.search-wrapper .search-content {
+  padding: 5px;
+}
+.search-wrapper .search-title {
+  display: inline-block;
+  padding: 0 2px;
+  margin: 3px 5px;
+  color: #666;
+}
+.search-wrapper .search-title.cur {
+  background-color: #ccc;
+}
+.search-wrapper .search-result li {
+  padding: 5px 10px;
+  cursor: pointer;
+}
+.search-wrapper .search-result li + li {
+  border-top: 1px dashed #ddd;
+}
+.search-wrapper .search-result li.cur {
+  background: #ccc;
+}
+.search-wrapper .search-result li.selected {
+  background: #e6e6e6;
+}
+.search-wrapper .search-result li.search-empty {
+  text-align: center;
+  padding: 15px 0;
+  color: #999;
+  cursor: auto;
+}
+
+.search-box {
+  padding: 2px 15px 2px 5px;
+  border-radius: 2px;
+  border: 1px solid #DBDBDB;
+}
+.search-box input {
+  border: 0;
+  height: 20px;
+  margin: 2px;
+}
+.search-box .search-tags {
+  position: relative;
+  display: inline-block;
+  height: 20px;
+  line-height: 20px;
+  background-color: #f0f0f0;
+  padding: 0 18px 0 4px;
+  margin: 2px;
+  border-radius: 3px;
+  color: #666;
+}
+.search-box .search-del {
+  cursor: pointer;
+  position: absolute;
+  right: 0px;
+  top: 1px;
+  font-size: 15px;
+  padding: 0 2px;
+}
+.search-box .search-del:before {
+  content: "X";
+}

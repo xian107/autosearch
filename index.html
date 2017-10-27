@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" href="css/style.css">
+	<script src="js/jquery-2.0.3.js"></script>
+	<script src="js/jquery.autosearch.js"></script>
+</head>
+<body>
+	<label>
+	<input type="text" class="box">
+	</label>
+	<script>
+		$(".box").autoSearch({
+			selectInitData :[{id:6,title:"厦门站"},{id:9,title:"厦门站123"}],
+	        maxHeight :309,
+	        maxItems : 50,
+	        selectedType:"id",
+	        recommenddata:[{id: "4", title: "厦门北站"},{id: "9", title: "厦门站123"},
+{id: "6", title: "厦门站"},{id: "14", title: "厦门北站"},{id: "19", title: "厦门站123"},
+{id: "16", title: "厦门站"},{id: "24", title: "厦门北站"},{id: "29", title: "厦门站123"},
+{id: "26", title: "厦门站"},{id: "34", title: "厦门北站"},{id: "39", title: "厦门站123"},
+{id: "36", title: "厦门站"},{id: "44", title: "厦门北站"},{id: "49", title: "厦门站123"},
+{id: "46", title: "厦门站"},{id: "54", title: "厦门北站"},{id: "59", title: "厦门站123"},
+{id: "56", title: "厦门站"},{id: "64", title: "厦门北站"},{id: "69", title: "厦门站123"},
+{id: "66", title: "厦门站"},{id: "74", title: "厦门北站"},{id: "79", title: "厦门站123"},
+{id: "76", title: "厦门站"}],
+	        data:[{id: "4", title: "厦门北站"},{id: "9", title: "厦门站123"},
+{id: "6", title: "厦门站"},{id: "14", title: "厦门北站"},{id: "19", title: "厦门站123"},
+{id: "16", title: "厦门站"},{id: "24", title: "厦门北站"},{id: "29", title: "厦门站123"},
+{id: "26", title: "厦门站"},{id: "34", title: "厦门北站"},{id: "39", title: "厦门站123"},
+{id: "36", title: "厦门站"},{id: "44", title: "厦门北站"},{id: "49", title: "厦门站123"},
+{id: "46", title: "厦门站"},{id: "54", title: "厦门北站"},{id: "59", title: "厦门站123"},
+{id: "56", title: "厦门站"},{id: "64", title: "厦门北站"},{id: "69", title: "厦门站123"},
+{id: "66", title: "厦门站"},{id: "74", title: "厦门北站"},{id: "79", title: "厦门站123"},
+{id: "76", title: "厦门站"}],
+        onerror : function(msg){
+            console.log(msg);
+        }
+
+	    });
+	</script>
+</body>
+</html>
