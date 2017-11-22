@@ -164,7 +164,14 @@ $.extend(AutoSearch.prototype,{
                 self.elem.auto_input.before(html);
                 break;
             case 'customize':
-                html += self.option.createTagsItemHandler(data,self.cache.cacheDate);
+                if ($.isFunction(self.option.createTagsItemHandler)) {      
+                    try{
+                        html += self.option.createTagsItemHandler(data,self.cache.cacheDate);
+                    } catch(e) {
+                        this._error('调用createTagsItemHandler错误:'+e);
+                        return;
+                    }
+                }            
                 self.elem.auto_input.before(html);
             case 'values':
                 if(self.option.selectType == "single"){
@@ -174,7 +181,14 @@ $.extend(AutoSearch.prototype,{
                     self.elem.auto_input.val(title);
                 }
             case 'other':
-                self.option.createOtherItemHandler(data,self.cache.cacheDate);                         
+                if ($.isFunction(self.option.createOtherItemHandler)) {
+                    try{
+                        self.option.createOtherItemHandler(data,self.cache.cacheDate);
+                    } catch(e) {
+                        this._error('调用createOtherItemHandler错误:'+e);
+                        return;
+                    }
+                }                                    
             case 'default':
                 break;                       
         };
@@ -468,7 +482,7 @@ $.extend(AutoSearch.prototype,{
                 data = self.option.matchRecommendHandler(data);
             } catch(e) {
                 self._error('调用matchRecommendHandler错误:'+e);
-                return;
+                //return;
             }
         }
         if($.isArray(data)){
@@ -485,7 +499,14 @@ $.extend(AutoSearch.prototype,{
                         }
                         break;
                     case 'customize':
-                        html += self.option.createRecommendItemHandler(data);
+                        if ($.isFunction(self.option.createRecommendItemHandler)) {
+                            try{
+                                html += self.option.createRecommendItemHandler(data);
+                            } catch(e) {
+                                self._error('调用createRecommendItemHandler错误:'+e);
+                                //return;
+                            }
+                        }        
                     case 'default':
                         break;                       
                 }
@@ -508,7 +529,7 @@ $.extend(AutoSearch.prototype,{
                 var data = self.option.matchHandler(data,value);
             } catch(e) {
                 self._error('调用matchHandler错误:'+e);
-                return;
+                //return;
             }
         }
         if($.isArray(data)){
@@ -522,7 +543,14 @@ $.extend(AutoSearch.prototype,{
                         }
                         break;
                     case 'customize':
-                        html += self.option.createItemHandler(data);
+                        if ($.isFunction(self.option.createItemHandler)) {
+                            try{
+                                 html += self.option.createItemHandler(data);
+                            } catch(e) {
+                                self._error('调用createItemHandler错误:'+e);
+                                //return;
+                            }
+                        }                      
                     case 'default':
                         break;                         
                 }
