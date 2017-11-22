@@ -54,6 +54,26 @@
 	        data_attributes_title:"sansan",
 	       // selectType:"multiple",
 	        selectedType:"id",
+	        recommendlistStyle:"customize",
+	        /*createRecommendItemHandler: function(data){
+	            var html = "";
+	            for(var i=0;i<data.length;i++){
+	                html += '<a href="javascript:;" data-id="'+ data[i].id +'" data-title="'+ data[i].com_name +'" class="search-title">'+ data[i].com_name +'</a>';
+	            }
+	            return html;
+	        },*/
+	        createTagsItemHandler: function(data){
+	            var html = '<span class="search-tags" data-id="'+ data.id +'" data-title="'+ data.title +'">'+ data.title +'<i class="search-del"></i><input type="hidden" name="regional_name" value="'+ data.title +'"><input type="hidden" name="bus_port_id" value="'+ data.id +'"></span>';
+	            return html;
+	        },
+	        listStyle:"customize",
+	        createItemHandler : function(data){
+	            var html = "";
+	            for(var i=0;i<data.length;i++){
+	                html += '<li data-id="'+ data[i].id +'" data-title="'+ data[i].com_name +'">'+ data[i].com_name +'</li>';
+	            }
+	            return html;
+	        },
 	        recommenddata:[{id: "4", sansan: "厦门北站"},{id: "9", sansan: "厦门站123"},
 {id: "6", sansan: "厦门站"},{id: "14", sansan: "厦门北站"},{id: "19", sansan: "厦门站123"},
 {id: "16", sansan: "厦门站"},{id: "24", sansan: "厦门北站"},{id: "29", sansan: "厦门站123"},
@@ -77,6 +97,9 @@
         }
 
 	    });
+
+
+
 	</script>
 </body>
 </html>
