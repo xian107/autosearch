@@ -2,7 +2,6 @@
 	@Name：搜索选中
 	@version：1.0.0
 	@Author：zhongdexian
-    @Website：https://github.com/xian107/autosearch
 	@Time：2017-10-18
 */
 ;(function($) {
@@ -36,16 +35,12 @@ $.extend(AutoSearch.prototype,{
 			// 基本設定
             width: 'auto',                                // 下拉框的宽度，number 或 'auto'
             maxHeight: null,                              // 下拉框的宽度最大高度，number
-            tagShow : "tags",                              // 选中值展示方式，tags，values
             selectType: 'single',                         // 单项、多选，multiple、single
             singleClose: true,							  // selectType为single时，是否选中一个后就关闭下拉框
             wrapperClass:'search-wrapper',                // 下拉框class
             inputWrapperClass:'search-box',               // 搜索外框的class
             tagsClass:'search-tags',                      // 选中框的class
-            search_delete:'j_search_del',                 // 关闭选中项class
-            direction:'down',                             // 下拉显示方向，'down' or 'up',
-            data_attributes_id:"id",                      // 输出数据的格式
-            data_attributes_title:"title",                // 输出数据的格式
+            direction:'down',                             // 下拉显示方向，'down' or 'up'
             selectInitData:null,                          // 初始化选中的数组，如[{"id":123,"title","名字"}]
             selectedName:'searchName[]',                  // 选中项的name
             selectedType:'id',                            // 选中项的传值方式，id or title or json
@@ -66,7 +61,6 @@ $.extend(AutoSearch.prototype,{
             ajaxAsync: true,                              // 请求的ajax，异步或同步，bool
             // callback
             createTagsItemHandler: null,                  // 创建搜索列表项时的回调函数,配合tagsListStyle为customize时使用
-            createOtherItemHandler: null,                  // 创建搜索列表项时的回调函数,配合tagsListStyle为other时使用
             beforeLoadRecommendDataHandler:null,          // 展示推荐装载数据之前的回调函数
             createRecommendItemHandler: null,             // 创建推荐列表项时的回调函数,配合recommendlistStyle为customize时使用
             matchRecommendHandler: null,            	  // 匹配推荐数据项的回调函数
@@ -75,7 +69,7 @@ $.extend(AutoSearch.prototype,{
             createItemHandler: null,                      // 创建搜索列表项时的回调函数,配合listStyle为customize时使用
             afterSelectedHandler: null,                   // 列表项被选择之后的回调函数
             //style
-            tagsListStyle:'normal', //选中项的展示样式，'normal','values','customize'(这个需与createTagsItemHandler一同使用）','other'(这个需与createOtherItemHandler一同使用),
+            tagsListStyle:'normal', //选中项的展示样式，'normal','customize(这个需与createTagsItemHandler一同使用）'
             recommendlistStyle:'normal', //推荐列表的展示样式，'normal','customize(这个需与createRecommendItemHandler一同使用）'
             listStyle: 'normal', //搜索列表的展示样式，'normal', 'customize(这个需与createItemHandler一同使用）'
 
@@ -83,10 +77,7 @@ $.extend(AutoSearch.prototype,{
             onerror: null                                 // 出错调试function
 		}, option);
 	},
-	_setOption2nd: function() {	
-        if(this.option.tagShow == "values" && (this.option.tagsListStyle != "normal" || this.option.tagsListStyle != "customize")){
-            this.option.tagsListStyle = "values";
-        }
+	_setOption2nd: function() {		
 		var cache = {};
 		//临时存储选中的data
 		cache.cacheDate = JSON.parse(JSON.stringify(this.option.selectInitData)) || [];
@@ -148,56 +139,31 @@ $.extend(AutoSearch.prototype,{
         var html = "",self = this;
         switch(self.option.tagsListStyle){
             case 'normal':              
-                html += '<span class="'+ self.option.tagsClass +'" data-id="'+ data[self.option.data_attributes_id] +'" data-title="'+ data[self.option.data_attributes_title] +'">'+ data[self.option.data_attributes_title] +'<i class="search-del '+ self.option.search_delete +'"></i><input type="hidden" name="'+ self.option.selectedName +'" value="';
-                switch(self.option.selectedType){
+                html += '<span class="'+ this.option.tagsClass +'" data-id="'+ data.id +'" data-title="'+ data.title +'">'+ data.title +'<i class="search-del"></i><input type="hidden" name="'+ this.option.selectedName +'" value="';
+                switch(this.option.selectedType){
                     case "id":
-                        html += data[self.option.data_attributes_id];
+                        html += data.id;
                         break;
                     case "title":
-                        html += data[self.option.data_attributes_title];
+                        html += data.title;
                         break;
                     case "json":
-                        html += "{\'" + [self.option.data_attributes_id] + "\':\'"+ data[self.option.data_attributes_id] +"\',\'" + [self.option.data_attributes_title] + "\':\'"+ data[self.option.data_attributes_title] +"\'}";
+                        html += "{\'id\':\'"+ data.id +"\',\'title\':\'"+ data.title +"\'}";
                         break;
                 }
                 html += '"></span>';
-                self.elem.auto_input.before(html);
                 break;
             case 'customize':
-                if ($.isFunction(self.option.createTagsItemHandler)) {      
-                    try{
-                        html += self.option.createTagsItemHandler(data,self.cache.cacheDate);
-                    } catch(e) {
-                        this._error('调用createTagsItemHandler错误:'+e);
-                        return;
-                    }
-                }            
-                self.elem.auto_input.before(html);
-            case 'values':
-                if(self.option.selectType == "single"){
-                    self.elem.auto_input.val(data[self.option.data_attributes_title]);
-                }else if(self.option.selectType == "multiple"){
-                    var title = self.elem.auto_input.val() + "," + data[self.option.data_attributes_title];
-                    self.elem.auto_input.val(title);
-                }
-            case 'other':
-                if ($.isFunction(self.option.createOtherItemHandler)) {
-                    try{
-                        self.option.createOtherItemHandler(data,self.cache.cacheDate);
-                    } catch(e) {
-                        this._error('调用createOtherItemHandler错误:'+e);
-                        return;
-                    }
-                }                                    
+                html += self.option.createTagsItemHandler(data);
             case 'default':
                 break;                       
         };
-        
+        this.elem.auto_input.before(html);
 	},
 	_someEvent: function(){
 		var self = this;
 		//删除选中项
-		self.elem.inputWrapper.on("click.searchDel","." + self.option.search_delete, function(e){
+		self.elem.inputWrapper.on("click.searchDel",".search-del", function(e){
 			e.stopPropagation();
 			self._delTagsElem(this);
 			return false;
@@ -229,30 +195,25 @@ $.extend(AutoSearch.prototype,{
 		var data = {};
 		if(!$this.hasClass("cur")){
         	switch(self.option.selectType){
-				case "single" :	
-                    if(self.option.tagShow === "tags"){
-					   $this.addClass('cur').siblings().removeClass("cur");
-                       self._singleDelete();
-                    } 			
+				case "single" :					
+					$this.addClass('cur').siblings().removeClass("cur");
+					self._singleDelete();
 					if(self.option.singleClose){
 						self._emptySearchView();
 					}
 					break;
 				case "multiple" :
-                    if(self.option.tagShow === "tags"){
-    					$this.addClass('cur');
-                    }
+					$this.addClass('cur');
 					break;
 			}
-			data[self.option.data_attributes_id] = $this.attr("data-id");
-			data[self.option.data_attributes_title] = $this.attr("data-title");
+			data.id = $this.attr("data-id");
+			data.title = $this.attr("data-title");
         	self._select(data);
 		}
 	},
 	_select: function(data){
-        this.cache.cacheDate.push(data);
 		this._setTagsElem(data);
-
+		this.cache.cacheDate.push(data);
 		// 计算绝对位置
         this._locateSearch();
 		//callback
@@ -267,26 +228,26 @@ $.extend(AutoSearch.prototype,{
 	},
 	_singleDelete:function(){
 		var self = this;
-		self.elem.inputWrapper.find("." + self.option.search_delete).each(function(){
+		self.elem.inputWrapper.find(".search-del").each(function(){
 			self._delTagsElem(this);
 		});			
 	},
 	_delTagsElem: function(self){
 		var $this = $(self),
-			$parent = $this.parents("." + this.option.tagsClass),	
-			data_title = $parent.data("title");	
+			$parent = $this.parent(),	
+			data_id = $parent.data("id");	
 		$parent.remove();
-		this.elem.container.find("[data-title='"+ data_title +"']").removeClass("cur");
-		this._delselectedData(data_title);
+		this.elem.container.find("[data-id='"+ data_id +"']").removeClass("cur");
+		this._delselectedData(data_id);
 	},
-	_delselectedData: function(title){
+	_delselectedData: function(id){
 		switch(this.option.selectType){
 			case "single" :
 				this.cache.cacheDate = [];
 				break;
 			case "multiple" :
 				for(var i=0; i<this.cache.cacheDate.length;i++){
-					if(this.cache.cacheDate[i][this.option.data_attributes_title]==title){
+					if(this.cache.cacheDate[i].id==id){
 						this.cache.cacheDate.splice(i,1);
 						break;
 					}
@@ -482,7 +443,7 @@ $.extend(AutoSearch.prototype,{
                 data = self.option.matchRecommendHandler(data);
             } catch(e) {
                 self._error('调用matchRecommendHandler错误:'+e);
-                //return;
+                return;
             }
         }
         if($.isArray(data)){
@@ -495,18 +456,11 @@ $.extend(AutoSearch.prototype,{
                 switch(self.option.recommendlistStyle){
                     case 'normal':
                         for(var i=0;i<data.length;i++){  
-                            html += '<a href="javascript:;" data-id="'+ data[i][self.option.data_attributes_id] +'" data-title="'+ data[i][self.option.data_attributes_title] +'" class="search-title">'+ data[i][self.option.data_attributes_title] +'</a>';
+                            html += '<a href="javascript:;" data-id="'+ data[i].id +'" data-title="'+ data[i].title +'" class="search-title">'+ data[i].title +'</a>';
                         }
                         break;
                     case 'customize':
-                        if ($.isFunction(self.option.createRecommendItemHandler)) {
-                            try{
-                                html += self.option.createRecommendItemHandler(data);
-                            } catch(e) {
-                                self._error('调用createRecommendItemHandler错误:'+e);
-                                //return;
-                            }
-                        }        
+                        html += self.option.createRecommendItemHandler(data);
                     case 'default':
                         break;                       
                 }
@@ -529,7 +483,7 @@ $.extend(AutoSearch.prototype,{
                 var data = self.option.matchHandler(data,value);
             } catch(e) {
                 self._error('调用matchHandler错误:'+e);
-                //return;
+                return;
             }
         }
         if($.isArray(data)){
@@ -539,18 +493,11 @@ $.extend(AutoSearch.prototype,{
                 switch(self.option.listStyle){
                     case 'normal':
                         for(var i=0;i<data.length;i++){
-                            html += '<li data-id="'+ data[i][self.option.data_attributes_id] +'" data-title="'+ data[i][self.option.data_attributes_title] +'">'+ data[i][self.option.data_attributes_title] +'</li>';
+                            html += '<li data-id="'+ data[i].id +'" data-title="'+ data[i].title +'">'+ data[i].title +'</li>';
                         }
                         break;
                     case 'customize':
-                        if ($.isFunction(self.option.createItemHandler)) {
-                            try{
-                                 html += self.option.createItemHandler(data);
-                            } catch(e) {
-                                self._error('调用createItemHandler错误:'+e);
-                                //return;
-                            }
-                        }                      
+                        html += self.option.createItemHandler(data);
                     case 'default':
                         break;                         
                 }
@@ -570,12 +517,10 @@ $.extend(AutoSearch.prototype,{
 	_showCommonView:function(){
 		var self = this;	
 		//选中的项加Class
-        if(self.option.tagShow === "tags"){
-            var initData = self.cache.cacheDate;   
-            for(var i=0;i<initData.length;i++){
-                self.elem.container.find("[data-title='"+ initData[i][self.option.data_attributes_title] +"']").addClass("cur");
-    		};
-        }
+        var initData = self.cache.cacheDate;   
+        for(var i=0;i<initData.length;i++){
+            self.elem.container.find("[data-id='"+ initData[i].id +"']").addClass("cur");
+		};
 		// 计算绝对位置
         self._locateSearch();
         self.elem.wrapper.show();
@@ -619,9 +564,7 @@ $.extend(AutoSearch.prototype,{
     	this.elem.wrapper.hide();
     	this.elem.content.show();
     	this.elem.tips_tit.html(this.option.searchTips);
-        if(this.option.tagShow == "tags"){
-            this.elem.auto_input.val("");
-        } 	
+    	this.elem.auto_input.val("");
 	},
 	_error: function(msg){
         if($.isFunction(this.option.onerror)){
