@@ -50,7 +50,7 @@
 .search-wrapper .search-result li.selected {
   background: #e6e6e6;
 }
-.search-wrapper .search-result li.search-empty {
+.search-wrapper .search-result li.search-empty,.search-empty{
   text-align: center;
   padding: 15px 0;
   color: #999;

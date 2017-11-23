@@ -38,6 +38,9 @@
 			padding: 50px;
 			width: 500px;
 		}
+		.box{
+			width: 240px;
+		}
 	</style>
 </head>
 <body>
@@ -48,34 +51,81 @@
 </div>
 	<script>
 		$(".box").autoSearch({
-			selectInitData :[{id:6,title:"厦门站"},{id:9,title:"厦门站123"}],
+			selectInitData :[{id:6,sansan:"岭兜站"},{id:9,sansan:"厦门站123"}],
 	        maxHeight :309,
 	        maxItems : 50,
+	        //singleClose : false,
+	        //direction:"up",
+	        selectedName:"nimei",
+	        data_attributes_id:"id",
+	        data_attributes_title:"sansan",
+	        //recommend:false,
 	        selectType:"multiple",
-	        selectedType:"id",
-	        recommenddata:[{id: "4", title: "厦门北站"},{id: "9", title: "厦门站123"},
-{id: "6", title: "厦门站"},{id: "14", title: "厦门北站"},{id: "19", title: "厦门站123"},
-{id: "16", title: "厦门站"},{id: "24", title: "厦门北站"},{id: "29", title: "厦门站123"},
-{id: "26", title: "厦门站"},{id: "34", title: "厦门北站"},{id: "39", title: "厦门站123"},
-{id: "36", title: "厦门站"},{id: "44", title: "厦门北站"},{id: "49", title: "厦门站123"},
-{id: "46", title: "厦门站"},{id: "54", title: "厦门北站"},{id: "59", title: "厦门站123"},
-{id: "56", title: "厦门站"},{id: "64", title: "厦门北站"},{id: "69", title: "厦门站123"},
-{id: "66", title: "厦门站"},{id: "74", title: "厦门北站"},{id: "79", title: "厦门站123"},
-{id: "76", title: "厦门站"}],
-	        data:[{id: "4", title: "厦门北站"},{id: "9", title: "厦门站123"},
-{id: "6", title: "厦门站"},{id: "14", title: "厦门北站"},{id: "19", title: "厦门站123"},
-{id: "16", title: "厦门站"},{id: "24", title: "厦门北站"},{id: "29", title: "厦门站123"},
-{id: "26", title: "厦门站"},{id: "34", title: "厦门北站"},{id: "39", title: "厦门站123"},
-{id: "36", title: "厦门站"},{id: "44", title: "厦门北站"},{id: "49", title: "厦门站123"},
-{id: "46", title: "厦门站"},{id: "54", title: "厦门北站"},{id: "59", title: "厦门站123"},
-{id: "56", title: "厦门站"},{id: "64", title: "厦门北站"},{id: "69", title: "厦门站123"},
-{id: "66", title: "厦门站"},{id: "74", title: "厦门北站"},{id: "79", title: "厦门站123"},
-{id: "76", title: "厦门站"}],
+	        recommendShow:true,
+	        selectedType:"json",
+	        maxItems:10,
+	        recommendlistStyle:"customize",
+	        //tagShow:"values",
+	        tagsListStyle:"values",
+	        afterSelectedHandler: function(d){
+	        	console.log(d);
+	        	return []
+	        },
+	        createOtherItemHandler : function(data,all){
+	        	console.log(all);
+	        	console.log(data);
+	        	return "nimei"
+	        },
+	        createRecommendItemHandler: function(data){
+	            var html = "";
+	            for(var i=0;i<data.length;i++){
+	                html += '<a href="javascript:;" data-id="'+ data[i].id +'" data-title="'+ data[i].sansan +'" class="search-title">'+ data[i].sansan +'</a>';
+	            }
+	            return html
+	        },
+	        createTagsItemHandler: function(data,all){
+	        	//console.log(all);
+	        	//console.log(data);
+	            var html = '<span class="search-tags" data-id="'+ data.id +'" data-title="'+ data.sansan +'">'+ data.sansan +'<i class="search-del j_search_del"></i><input type="hidden" name="regional_name" value="'+ data.sansan +'"><input type="hidden" name="bus_port_id" value="'+ data.id +'"></span>';
+	            return html;
+	        },
+	        listStyle:"customize",
+	        createItemHandler : function(data){
+	            var html = "";
+	            for(var i=0;i<data.length;i++){
+	                html += '<li data-id="'+ data[i].id +'" data-title="'+ data[i].sansan +'">'+ data[i].sansan +'</li>';
+	            }
+	            return html;
+	        },
+	        recommenddata:function(val){
+	        	//console.log(val);
+	        	return [{id: "4", sansan: "时代复分"},{id: "9", sansan: "厦门站123"},
+{id: "6", sansan: "岭兜站"},{id: "14", sansan: "斯蒂芬"},{id: "19", sansan: "豆腐干"},
+{id: "16", sansan: "该回家"},{id: "24", sansan: "不错"},{id: "29", sansan: "奋斗过"},
+{id: "26", sansan: "现在才"},{id: "34", sansan: "tertiary"},{id: "39", sansan: "飞过海"},
+{id: "36", sansan: "下次v"},{id: "44", sansan: "让他"},{id: "49", sansan: "地方"},
+{id: "46", sansan: "发个"},{id: "54", sansan: "而忐忑"},{id: "59", sansan: "二万人"},
+{id: "56", sansan: "改好"},{id: "64", sansan: "微软"},{id: "69", sansan: "儿童"},
+{id: "66", sansan: "就"},{id: "74", sansan: "豆腐干"},{id: "79", sansan: "宿舍"},
+{id: "76", sansan: "第三方"}]
+	        },
+	        data:[{id: "4", sansan: "时代复分"},{id: "9", sansan: "厦门站123"},
+{id: "6", sansan: "岭兜站"},{id: "14", sansan: "斯蒂芬"},{id: "19", sansan: "豆腐干"},
+{id: "16", sansan: "该回家"},{id: "24", sansan: "不错"},{id: "29", sansan: "奋斗过"},
+{id: "26", sansan: "现在才"},{id: "34", sansan: "tertiary"},{id: "39", sansan: "飞过海"},
+{id: "36", sansan: "下次v"},{id: "44", sansan: "让他"},{id: "49", sansan: "地方"},
+{id: "46", sansan: "发个"},{id: "54", sansan: "而忐忑"},{id: "59", sansan: "二万人"},
+{id: "56", sansan: "改好"},{id: "64", sansan: "微软"},{id: "69", sansan: "儿童"},
+{id: "66", sansan: "就"},{id: "74", sansan: "豆腐干"},{id: "79", sansan: "宿舍"},
+{id: "76", sansan: "第三方"}],
         onerror : function(msg){
             console.log(msg);
         }
 
 	    });
+
+
+
 	</script>
 </body>
 </html>
