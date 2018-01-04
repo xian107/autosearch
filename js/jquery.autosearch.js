@@ -55,10 +55,10 @@ $.extend(AutoSearch.prototype,{
             searchTips: '支持中文/简拼输入',              // 搜索提示语
             resultTips:'若需缩小范围，请输入更多信息',    // 搜索结果提示语
             // data
-            recommenddata:[],                             // 推荐请求的数据array, ajax, function
+            recommenddata:null,                             // 推荐请求的数据array, ajax, function
             recommendParams: {},                          // 推荐请求的ajax参数，function, string, object
             recommendAjaxType: 'GET',                     // 推荐请求的ajax类型，string 'GET' or 'POST'
-            data: [],                                     // 搜索请求的数据，array, ajax的url, function
+            data: null,                                     // 搜索请求的数据，array, ajax的url, function
             ajaxDataType: 'json',                         // 请求的ajax数据类型，string 'json' or 'xml'
             ajaxParams: {},                               // 搜索请求的ajax参数，function, string, object
             ajaxTimeout: 500,                             // 请求延迟时间number
@@ -74,6 +74,7 @@ $.extend(AutoSearch.prototype,{
             matchHandler: null,                           // 匹配数据项的回调函数
             createItemHandler: null,                      // 创建搜索列表项时的回调函数,配合listStyle为customize时使用
             afterSelectedHandler: null,                   // 列表项被选择之后的回调函数
+            afterDelHandler:null,                         // 删除所选项之后的回调函数
             //style
             tagsListStyle:'normal', //选中项的展示样式，'normal','values','customize'(这个需与createTagsItemHandler一同使用）','other'(这个需与createOtherItemHandler一同使用),
             recommendlistStyle:'normal', //推荐列表的展示样式，'normal','customize(这个需与createRecommendItemHandler一同使用）'
@@ -88,6 +89,9 @@ $.extend(AutoSearch.prototype,{
             this.option.tagsListStyle = "values";
         }else if(this.option.tagsListStyle == "values"){
             this.option.tagShow = "values";
+        }
+        if(!this.option.recommenddata && this.option.data){
+            this.option.recommenddata = this.option.data;
         }
         var cache = {};
         //临时存储选中的data
@@ -109,8 +113,8 @@ $.extend(AutoSearch.prototype,{
         elem.container = $('<div class="search-container" />').appendTo(elem.wrapper);
         elem.tips      = $('<div class="search-tips"><i class="search-close"></i></div>').appendTo(elem.container);
         elem.tips_tit  = $('<span class="search-tips-tit">'+ this.option.searchTips +'</span>').appendTo(elem.tips);
-        elem.result    = $('<ul class="search-result" />').appendTo(elem.container);
-        elem.content   = $('<div class="search-content" />').appendTo(elem.container);
+        elem.result    = $('<ul class="j_search_con search-result" />').appendTo(elem.container);
+        elem.content   = $('<div class="j_search_con search-content" />').appendTo(elem.container);
         this.elem = elem;
     },
     _setStyle : function(){
@@ -218,9 +222,20 @@ $.extend(AutoSearch.prototype,{
         //删除选中项
         self.elem.inputWrapper.on("click.searchDel","." + self.option.search_delete, function(e){
             e.stopPropagation();
+            //删除回调
+            if ($.isFunction(self.option.afterDelHandler)) {
+                try{
+                    self.option.afterDelHandler(this);
+                } catch(e) {
+                    self._error('afterDelHandler:'+e);
+                    return;
+                }
+            };
+            
             self._delTagsElem(this);
             // 计算绝对位置
             self._locateSearch();
+            
             return false;
         });
         //点击推荐项
@@ -267,10 +282,10 @@ $.extend(AutoSearch.prototype,{
             }
             data[self.option.data_attributes_id] = $this.attr("data-id");
             data[self.option.data_attributes_title] = $this.attr("data-title");
-            self._select(data);
+            self._select(data,that);
         }
     },
-    _select: function(data){
+    _select: function(data,that){
         this.cache.cacheDate.push(data);
         this._setTagsElem(data);
 
@@ -279,7 +294,7 @@ $.extend(AutoSearch.prototype,{
         //callback
         if ($.isFunction(this.option.afterSelectedHandler)) {
             try{
-                this.option.afterSelectedHandler(data,this.cache.cacheDate);
+                this.option.afterSelectedHandler(that,this.cache.cacheDate);
             } catch(e) {
                 this._error('调用afterSelectedHandler错误:'+e);
                 return;
@@ -438,7 +453,7 @@ $.extend(AutoSearch.prototype,{
                 self._error('调用data错误:'+e);
                 return;
             }
-        } else if (typeof(self.option.data) === 'string') {
+        } else if (typeof data === 'string') {
             try{
                 self._ajaxSend(data,callback,value);
             } catch(e) {
@@ -491,6 +506,9 @@ $.extend(AutoSearch.prototype,{
                     self._error('输出data错误:'+e);
                     return;
                 }                           
+            },
+            error:function(e){
+                self._error('url错误:'+e);
             }
         }); 
     },      
@@ -541,7 +559,7 @@ $.extend(AutoSearch.prototype,{
             self._error('推荐调用的data格式不是数组');
             return false;
         }
-        self.elem.content.html(html);
+        self.elem.content.data({datas:data}).html(html);
         //列表加class
         self.elem.content.children().addClass(self.option.recommendlistStyle);
         self._emptySearchView();
@@ -590,7 +608,7 @@ $.extend(AutoSearch.prototype,{
             self._error('搜索调用的data格式不是数组');
             return false;
         }
-        self.elem.result.html(html);
+        self.elem.result.data({datas:data}).html(html);
         //列表加class
         self.elem.result.children().addClass(self.option.listStyle);
         self.elem.result.show();
