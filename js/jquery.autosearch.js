@@ -32,6 +32,7 @@ $.extend(AutoSearch.prototype,{
         this.cache = this._setOption2nd();
     },
     _setOption1st: function(option) {
+        var self = this;
         return $.extend({
             // 基本設定
             width: 'auto',                                // 下拉框的宽度，number 或 'auto'
@@ -71,7 +72,7 @@ $.extend(AutoSearch.prototype,{
             createRecommendItemHandler: null,             // 创建推荐列表项时的回调函数,配合recommendlistStyle为customize时使用
             matchRecommendHandler: null,                  // 匹配推荐数据项的回调函数
             beforeLoadDataHandler: null,                  // 每次输入之后装载数据之前的回调函数
-            matchHandler: null,                           // 匹配数据项的回调函数
+            matchHandler: self._defaultMatchHandler,      // 匹配数据项的回调函数
             createItemHandler: null,                      // 创建搜索列表项时的回调函数,配合listStyle为customize时使用
             afterSelectedHandler: null,                   // 列表项被选择之后的回调函数
             afterDelHandler:null,                         // 删除所选项之后的回调函数
@@ -438,9 +439,6 @@ $.extend(AutoSearch.prototype,{
         var self = this;
         var keyword = self.elem.auto_input.val();
         if ($.isArray(data)) {
-            if(self.option.recommenddata.length == 0){
-                self.option.recommend = false;
-            }
             if(data.length == 0){
                 self._error('data不能为空数组！');
                 return false;
@@ -567,46 +565,46 @@ $.extend(AutoSearch.prototype,{
         //已加载展示推荐
         self.cache.isLoad = true;
     },
-    _keyupElem: function(data) {
+    _keyupElem: function(result) {
         var self = this,html="";
-        var value = self.elem.auto_input.val();
-        if ($.isFunction(self.option.matchHandler)) {
-            try{
-                var data = self.option.matchHandler(data,value);
-            } catch(e) {
-                self._error('调用matchHandler错误:'+e);
-            }
-        }
-        if($.isArray(data)){
-            if(data.length == 0){
-                html += '<li class="search-empty">找不到相关的内容！</li>'
-            }else{
-                switch(self.option.listStyle){
-                    case 'normal':
-                        for(var i=0;i<data.length;i++){
-                            html += '<li data-id="'+ data[i][self.option.data_attributes_id] +'" data-title="'+ data[i][self.option.data_attributes_title] +'">'+ data[i][self.option.data_attributes_title] +'</li>';
-                        }
-                        break;
-                    case 'customize':
-                        if ($.isFunction(self.option.createItemHandler)) {
-                            try{
-                                 html += self.option.createItemHandler(data);
-                            } catch(e) {
-                                self._error('调用createItemHandler错误:'+e);
-                                return;
-                            }
-                        }else{
-                            self._error('createItemHandler不是一个函数');
-                            return;
-                        }
-                        break;                     
-                    case 'default':
-                        break;                         
-                }
-            }
-        }else{
+        var keyword = self.elem.auto_input.val();
+        var data = [];
+        if(!$.isArray(result)){
             self._error('搜索调用的data格式不是数组');
             return false;
+        }
+        $.each(result, function(index, value){
+            if ($.isFunction(self.option.matchHandler)) {
+                if(self.option.matchHandler.apply(self,[keyword,value])){
+                    data.push(value);
+                }        
+            }
+        });
+        if(data.length == 0){
+            html += '<li class="search-empty">找不到相关的内容！</li>'
+        }else{
+            switch(self.option.listStyle){
+                case 'normal':
+                    for(var i=0;i<data.length;i++){
+                        html += '<li data-id="'+ data[i][self.option.data_attributes_id] +'" data-title="'+ data[i][self.option.data_attributes_title] +'">'+ data[i][self.option.data_attributes_title] +'</li>';
+                    }
+                    break;
+                case 'customize':
+                    if ($.isFunction(self.option.createItemHandler)) {
+                        try{
+                             html += self.option.createItemHandler(data);
+                        } catch(e) {
+                            self._error('调用createItemHandler错误:'+e);
+                            return;
+                        }
+                    }else{
+                        self._error('createItemHandler不是一个函数');
+                        return;
+                    }
+                    break;                     
+                case 'default':
+                    break;                         
+            }
         }
         self.elem.result.data({datas:data}).html(html);
         //列表加class
@@ -676,6 +674,11 @@ $.extend(AutoSearch.prototype,{
         if($.isFunction(this.option.onerror)){
             this.option.onerror(msg);
         }
+    },
+    _defaultMatchHandler: function(keyword, data){
+        var self = this;
+        var regex = RegExp(keyword.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1"), 'i');
+        return regex.test(data[self.option.data_attributes_title]);
     },
     /* ------- 以下共有可调用方法 ------------- */
     methods : function(option){
